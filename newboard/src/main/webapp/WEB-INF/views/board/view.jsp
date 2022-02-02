@@ -1,6 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.ArrayList" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -19,17 +21,15 @@ function revision(){ // 게시글 수정 메소드
 	document.querySelector("#content").readOnly = false // readonly를 false로 바꿔 수정가능하게 함
 }
 
-function revision_cancel(){ // 수정 취소 메소드
-	window.location.href = "/jinsu_board/board?boardNo=${readvo.boardNO}"
+function dataReset(){ // 글을 완전히 새로 쓰고 싶을 때 쓰는 메소드(모든 글을 지워준다.)
+	document.querySelector("#title").value=""
+	document.querySelector("#content").value=""	
 }
+
 
 function elimination(){// 게시글 삭제 메소드
-	window.location.href = "/jinsu_board/board?action=delete&boardNo=${readvo.boardNO}""
+	window.location.href = "${pageContext.request.contextPath}/board/delete/${readvo.boardNo}?page=${param.page}&kwd=${param.kwd}&value=${param.value}'"
 	alert("삭제가 완료되었습니다.")	
-}
-
-function back(){ // 게시글 되돌아가기 메소드
-	window.location.href = "/jinsu_board/board?action=back&boardNo=${readvo.boardNO}"
 }
 
 function reply(){ // 댓글 달기(댓글 입력창을 표시해준다.)
@@ -40,11 +40,6 @@ function reply(){ // 댓글 달기(댓글 입력창을 표시해준다.)
 function reject(){ // 댓글 작성을 위해 댓글 입력창을 숨긴다.
 	document.querySelector("#replyform").style.display='none';
 	document.querySelector("#reply").style.display='block';	
-}
-
-function dataReset(){ // 댓글을 완전히 새로 쓰고 싶을 때 쓰는 메소드(모든 글을 지워준다.)
-	document.querySelector("#title").value=""
-	document.querySelector("#content").value=""	
 }
 
 function deleteimg(){ // 이미지를 지워주고 싶을 때 쓰는 메소드
@@ -73,58 +68,51 @@ function reply_delete(index){// 댓글 삭제 메소드
 	let reply_number = document.querySelector('.replyno' + String(index)).value
 	console.log(reply_number)
 	alert("삭제가 완료되었습니다.")
-	location.href="/jinsu_board/board?action=replyDelete&boardNo=${readvo.boardNO}&replyNo=" + reply_number
+	location.href="/jinsu_board/board?action=replyDelete&boardNo=${readvo.boardNo}&replyNo=" + reply_number
 }
 
 function reply_reset(index){ // 댓글 수정 시 글 전비 지워주는 메소드
 	document.querySelector('.replycontent' + String(index)).value = ""
 }
 </script>
-<%-- <%
-List<String> userList = (List<String>)session.getAttribute("user");
-List<ReplyVO> replyList = (List<ReplyVO>)request.getAttribute("reply"); // 댓글을 단 사람들이 저장되어 있는 데이터 리스트
-BoardVO vo = (BoardVO)request.getAttribute("readvo");
-%>
 
 <h1>게시판 조회</h1>
 <hr>
-<h2 id="user">로그인 유저 : <%=userList.get(0)%></h2>
-<form id = "form" method="post" action="<%= request.getContextPath()%>/board">
-<input id = "board" type="hidden" name = "boardNo" value = "${readvo.boardNO}">
-<input type="hidden" name = action value = "update">
-작성자 : <input id="idcheck1" value="${readvo.userID}" readonly><br>
+<h2 id="user">로그인 유저 : ${authUser.id}</h2>
+<form id = "form" method="post" action="${pageContext.request.contextPath}/board/update?page=${param.page}&kwd=${param.kwd}&value=${param.value}'">
+<input type="hidden" name="boardNo" value="${readvo.boardNo}">
+작성자 : <input id="idcheck1" value="${readvo.id}" readonly><br>
 제목 : <input id = "title" name="title" value="${readvo.title}" readonly> <br>
 내용물 : <br>
 <textarea id = "content" name="content" rows="10" cols="35" readonly>${readvo.content}</textarea><br>
-<%
-if(vo.getFileurl()!=null){	
-%>	
+<c:if test="${not empty vo.fileurl}">
 	이미지<br>
-	<img src="<%=vo.getFileurl()%>" width="200px" height="200px">
-<%	
-}
-%>
+	<img src="${vo.fileurl}" width="200px" height="200px">
+</c:if>
+
 <div id = "post" style="display:none">
 <input type="submit" value="수정완료" onclick="alert('수정이 완료되었습니다.')">
 <input type="reset" value="다시작성">
 </div>
 </form>
-<button id = "backbtn" onclick="back();">게시판 목록으로</button>
-<%
-if(userList.get(0).equals(vo.getUserID())){
-%>
-	<button id = "rbtn" onclick="revision();">수정</button>
-	<button id = "dbtn" onclick="elimination();">삭제</button>
-	<div id = "revision" style="display:none">
-	이미지 : <input type="file" name="file" >
-	<br>
-	<button onclick="dataReset();">글 전부 지우기</button>
-	<button onclick="deleteimg();">이미지 지우기</button>
-	<button onclick="revision_cancel();">수정 취소</button>
-	</div>
-<%		
-}
-%>
+<div id = "revision" style="display:none">
+이미지 : <input type="file" name="file" >
+<br>
+<button onclick="dataReset();">글 전부 지우기</button>
+<button onclick="deleteimg();">이미지 지우기</button>
+<button onclick="location.href='${pageContext.request.contextPath}/board?page=${param.page}&kwd=${param.kwd}&value=${param.value}'">수정 취소</button>
+</div>
+<button id = "backbtn" onclick="location.href='${pageContext.request.contextPath}/board?page=${param.page}&kwd=${param.kwd}&value=${param.value}'">게시판 목록으로</button>
+
+<c:if test="${authUser.id==readvo.id}">
+<button id = "rbtn" onclick="revision();">수정</button>
+<button id = "dbtn" onclick="elimination();">삭제</button>
+</c:if>
+
+
+
+
+<%-- 
 
 <button id = "replybtn" onclick="reply();">댓글 달기</button>
 
@@ -171,7 +159,6 @@ if(replyList.size()>0){ // for문으로 답글을 단 사람들 정보를 하나
 		<br>
 <%
 	}
-}
-%> --%>
+} --%>
 </body>
 </html>
