@@ -7,8 +7,6 @@
 <head>
 <meta charset="UTF-8">
 <title>Insert title here</title>
-<style>
-</style>
 </head>
 <body>
 <script>
@@ -26,80 +24,68 @@ function reject(){ // 글 작성 취소
 
 </script>
 
-<!-- List<String> userList = new ArrayList<String>();
-if(session.getAttribute("user") == null){ // 사용자 세션 정보가 없으면 비회원으로 처리
-	userList = new ArrayList<String>(Arrays.asList("비회원","B"));
-}
-else{
-	userList = (List<String>)session.getAttribute("user"); // 사용자 세션 정보 얻기
-}
-
- -->
-
 <c:choose>
 	<c:when test="${empty authUser}">
 		<h3 id="userinfo">사용자 : 비회원</h3>
-		<li><a href="${pageContext.request.contextPath}/user/login">로그인</a><li>
-		<li><a href="${pageContext.request.contextPath}/user/join">회원가입</a><li>
+		<a href="${pageContext.request.contextPath}/user/login">로그인</a><br>
+		<a href="${pageContext.request.contextPath}/user/join">회원가입</a>
 	</c:when>
 	<c:otherwise>
 		<h3 id="userinfo">사용자 : ${authUser.id}</h3>
-		<li><a href="${pageContext.request.contextPath}/user/update">회원정보수정</a><li>
-		<li><a href="${pageContext.request.contextPath}/user/logout">로그아웃</a><li>
+		<a href="${pageContext.request.contextPath}/user/update">회원정보수정</a><br>
+		<a href="${pageContext.request.contextPath}/user/logout">로그아웃</a>
 	</c:otherwise>
 </c:choose>		
 
 <table border="1">
 <tr><th>글번호</th><th>작성자</th><th>글제목</th><th>조회수</th><th>댓글수</th><th>작성 날짜</th></tr>  
-		<c:forEach items="${list}" var="vo" varStatus="status">
+		<c:forEach items="${map.list}" var="vo" varStatus="status">
 		 <tr><td>${vo.boardNo}</td>
 		 <td>${vo.id}</td>
-		 <td><a href="${pageContext.servletContext.contextPath}" style="text-decoration-line:none">${vo.title}</a></td>			
+		 <td>
+		 <c:choose>
+		 	<c:when test="${not empty authUser}">
+		 		<a href="${pageContext.servletContext.contextPath}/board/view/${vo.boardNo}?page=${map.currentPage}&kwd=${map.kwd}&value=${map.value}" 
+		 		style="text-decoration-line:none">${vo.title}</a>
+		 	</c:when>
+		 	<c:otherwise>
+		 		<a href="${pageContext.servletContext.contextPath}/user/login" style="text-decoration-line:none">${vo.title}</a>
+	 		</c:otherwise>
+	 	</c:choose>	
+		 </td>			
 		 <td>${vo.readCount}</td>
 		 <td>${vo.replyCount}</td>
 		 <td>${vo.writeDate}</td></tr>
 		 </c:forEach> 
 </table>
-<%-- 		<c:if test = "${paging[0]>10}">
-		<a href="${pageContext.servletContext.contextPath}/board?arrow=arrow&page=${paging[0]-10}" style="font-size:20px; text-decoration-line:none; color:red;" >◀◀◀</a>
-		</c:if>
-		<c:if test = "${paging[0]>5}">
-		<a href="${pageContext.servletContext.contextPath}/board?arrow=arrow&page=${paging[0]-5}" style="font-size:20px; text-decoration-line:none; color:green;">◀◀</a>
-		</c:if>
-		<c:if test = "${paging[0]>1}">
-		<a href="${pageContext.servletContext.contextPath}/board?arrow=arrow&page=${paging[0]-1}" style="font-size:20px; text-decoration-line:none; color:black;">◀</a>
-		</c:if>
-		
-		<c:forEach  begin="${paging[0]}" end="${paging[1]}"  step="1" var="page">
-			<a href="${pageContext.servletContext.contextPath}/board?position=${paging[0]}&page=${page}" style="font-size:20px; text-decoration-line:none;">${page}</a>
-		</c:forEach>
-		
-		<c:if test = "${Math.ceil(list.size()/10) - paging[0]>=1}">
-		<a href="${pageContext.servletContext.contextPath}/board?arrow=arrow&page=${paging[0]+1}" style="font-size:20px; text-decoration-line:none; color:black;">▶</a>
-		</c:if>
-		<c:if test = "${Math.ceil(list.size()/10) - paging[0]>=5}">
-		<a href="${pageContext.servletContext.contextPath}/board?arrow=arrow&page=${paging[0]+5}" style="font-size:20px; text-decoration-line:none; color:green;">▶▶</a>
-		</c:if>
-		<c:if test = "${Math.ceil(list.size()/10) - paging[0]>=10}">
-		<a href="${pageContext.servletContext.contextPath}/board?arrow=arrow&page=${paging[0]+10}" style="font-size:20px; text-decoration-line:none; color:red;">▶▶▶</a>
-		</c:if>
-		 --%>
-		
+<!-- paging 처리 -->
+			<c:if test = "${map.startPage!=1}">
+			<a href="${pageContext.servletContext.contextPath}/board?page=${map.startPage-5}&kwd=${map.kwd}&value=${map.value}&arrow=arrow">◀</a>
+			</c:if>
+			<c:forEach  begin="${map.startPage}" end="${map.endPage}"  step="1" var="page">
+				<c:choose>
+					<c:when test="${map.currentPage==page}">
+						<a href="${pageContext.servletContext.contextPath}/board?page=${page}&kwd=${map.kwd}&value=${map.value}"> ${page}</a>
+					</c:when>
+					<c:otherwise>
+					<a href="${pageContext.servletContext.contextPath}/board?&page=${page}&kwd=${map.kwd}&value=${map.value}">${page}</a>
+					</c:otherwise>	
+				</c:choose>		
+			</c:forEach>
+			<c:if test = "${map.endPage!=Math.ceil(map.totalList.size()/10)}">
+			<a href="${pageContext.servletContext.contextPath}/board?page=${map.startPage+5}&kwd=${map.kwd}&value=${map.value}&arrow=arrow">▶</a>
+			</c:if>
 
-
-<%-- <h3>총 글의 개수 : ${totalpage.size()}</h3>
-<form method=get action="<%= request.getContextPath() %>/board"> 
-<input type="hidden" name="action" value="search">
-<select name="condition">
+<h3>총 글의 개수 : ${map.totalList.size()}</h3>
+<form method=get action="${pageContext.request.contextPath}/board"> 
+<select name="kwd">
     <option value="" disabled>검색</option>
-    <option value="subtitle">제목</option>
-    <option value="subcontent">내용</option>
-    <option value="subid">작성자</option>
+    <option value="title">제목</option>
+    <option value="content">내용</option>
 </select>
-<input name = "word" placeholder="글자를 입력하세요">
-
+<input name = "value" placeholder="글자를 입력하세요">
 </form>
- --%>
+
 <c:if test="${not empty authUser}">
 <button id ="add" onclick="dislpayDiv(1);"> 게시판 작성</button>
 </c:if>
