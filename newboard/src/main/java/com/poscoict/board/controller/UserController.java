@@ -27,21 +27,21 @@ public class UserController {
 		return "user/login";
 	}
 	
-	// 로그인 할 때 아이디, 비밀번호 일치 체크
-	@RequestMapping(value="/login", method=RequestMethod.POST)
-	public String login(HttpSession session,
-			@RequestParam(value="id", required=true, defaultValue="")String id,
-			@RequestParam(value="password", required=true, defaultValue="")String password,
-			Model model){
-		UserVo authUser = userService.getUser(id, password);
-		
-		if(authUser==null) { // 아이디, 비밀번호가 일치하지 않을 때
-			return "redirect:/user/login";
-		}
-		// 인증 처리
-		session.setAttribute("authUser", authUser);
-		return "redirect:/board";
-	}
+//	// 로그인 할 때 아이디, 비밀번호 일치 체크
+//	@RequestMapping(value="/login", method=RequestMethod.POST)
+//	public String login(HttpSession session,
+//			@RequestParam(value="id", required=true, defaultValue="")String id,
+//			@RequestParam(value="password", required=true, defaultValue="")String password,
+//			Model model){
+//		UserVo authUser = userService.getUser(id, password);
+//		
+//		if(authUser==null) { // 아이디, 비밀번호가 일치하지 않을 때
+//			return "redirect:/user/login";
+//		}
+//		// 인증 처리
+//		session.setAttribute("authUser", authUser);
+//		return "redirect:/board";
+//	}
 	
 	// 로그아웃
 	@RequestMapping(value="/logout", method=RequestMethod.GET)
