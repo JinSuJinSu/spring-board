@@ -8,7 +8,7 @@
 </head>
 <body>
 <h1>필요한 정보들을 입력하세요</h1>
-<form method ="post" action="${pageContext.request.contextPath}/user/join">
+<form method ="post" action="${pageContext.request.contextPath}/user/auth">
 id 입력<input type="text" name="id"><br>
 password 입력<input type="password" name="password"><br>
 이름 <input type="text" name ="name"><br>
