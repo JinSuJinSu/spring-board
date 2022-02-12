@@ -12,7 +12,7 @@ import com.poscoict.board.vo.UserVo;
 
 
 
-public class LoginIntercepter extends HandlerInterceptorAdapter {
+public class LoginInterceptor extends HandlerInterceptorAdapter {
 	
 	@Autowired
 	private UserService userService;
@@ -22,6 +22,8 @@ public class LoginIntercepter extends HandlerInterceptorAdapter {
 			throws Exception {
 		String id = request.getParameter("id");
 		String password = request.getParameter("password");
+		
+		System.out.println();
 		
 		UserVo authUser = userService.getUser(id,password);
 		if(authUser==null) {
