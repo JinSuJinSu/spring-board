@@ -6,7 +6,7 @@
 		<typeAlias type="com.poscoict.board.vo.BoardVo" alias="boardvo"/>
    	</typeAliases>	
 	<mappers>
-		<mapper resource="mybatis/mappers/user.xml"></mapper>
-		<mapper resource="mybatis/mappers/board.xml"></mapper>
+		<mapper resource="com/poscoict/board/config/app/mybatis/mappers/user.xml"></mapper>
+		<mapper resource="com/poscoict/board/config/app/mybatis/mappers/board.xml"></mapper>
 	</mappers>
 </configuration>

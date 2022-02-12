@@ -6,7 +6,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 
-public class LogoutIntercepter extends HandlerInterceptorAdapter {
+public class LogoutInterceptor extends HandlerInterceptorAdapter {
 	
 
 	@Override
@@ -18,7 +18,7 @@ public class LogoutIntercepter extends HandlerInterceptorAdapter {
 			session.removeAttribute("authUser");
 			session.invalidate();
 		}
-		response.sendRedirect(request.getContextPath());
+		response.sendRedirect(request.getContextPath() + "/board");
 		return false;	
 	}
 

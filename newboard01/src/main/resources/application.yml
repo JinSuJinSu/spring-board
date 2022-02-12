@@ -1,0 +1,75 @@
+spring:
+   profiles:
+      active: dev
+---
+# common spring boot configuration
+spring:
+   # devtools -live reload
+   livereload:
+      enabled: true
+
+   # mvc
+   mvc:
+      view:
+         prefix: /WEB-INF/views/
+         suffix: .jsp
+
+   # aop(@EnableAspectJAutoProxy)
+   aop:
+      auto: true
+      proxy-target-class: true
+
+---
+# dev profile spring boot configuration
+spring:
+   config:
+      activate:
+         on-profile: dev
+
+   datasource:
+      driver-class-name: org.mariadb.jdbc.Driver
+      url: jdbc:mysql://192.168.0.66:3307/springdb?characterEncoding=UTF-8&serverTimezone=UTC
+      username: springdb
+      password: springdb
+      hikari:
+         minimum-dele: 10
+         maximum-pool-size: 20
+
+---
+# production profile spring boot configuration
+spring:
+   config:
+      activate:
+         on-profile: production
+
+   datasource:
+      driver-class-name: org.mariadb.jdbc.Driver
+      url: jdbc:mysql://211.14.5.6:3307/springdb?characterEncoding=UTF-8&serverTimezone=UTC
+      username: springdb
+      password: adfasdfewra@sdfsdf
+      hikari:
+         minimum-dele: 10
+         maximum-pool-size: 20
+
+---
+# server
+server:
+   port: 8080
+   servlet:
+      context-path: /newboard01
+      encoding:
+         charset: utf-8
+         enabled: true
+         force: false
+         force-request: false
+         force-response: false
+
+---
+# mybatis
+mybatis:
+   config-location: classpath:mybatis/configuration.xml
+
+---
+# logging
+logging:
+      config: classpath:logback.xml
